@@ -1,5 +1,6 @@
 package com.example.tasksapp.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
@@ -30,15 +31,19 @@ class TaskTimerViewModel(private val targetTime: Long) : ViewModel() {
                 // Check if target time is invalid or already passed
                 val currentTime = System.currentTimeMillis()
 
-                if (targetTime <= 0L || targetTime <= currentTime) {
+                var diff = targetTime - currentTime
+
+                Log.e("diff",diff.toString())
+
+                if (diff<0) {
+                    Log.e("diff","less than zero")
                     _remainingTime.value = "00:00:00"
                     _isFinished.value = true
                     return@launch
                 }
 
-                var diff = targetTime - currentTime
-
                 while (diff > 0) {
+                    Log.e("diff","greater than zero")
                     _remainingTime.value = formatMillis(diff)
                     delay(1000)
 
@@ -46,6 +51,7 @@ class TaskTimerViewModel(private val targetTime: Long) : ViewModel() {
 
                     // When time's up, set to zero and finish
                     if (diff <= 0) {
+                        Log.e("diff","less than zero 22")
                         _remainingTime.value = "00:00:00"
                         _isFinished.value = true
                         break
