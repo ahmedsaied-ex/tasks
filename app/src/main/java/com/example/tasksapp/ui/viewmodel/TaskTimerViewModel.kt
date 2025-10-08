@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-
 class TaskTimerViewModel(private val targetTime: Long) : ViewModel() {
 
     private val _remainingTime = MutableStateFlow("00:00:00")
@@ -21,43 +20,42 @@ class TaskTimerViewModel(private val targetTime: Long) : ViewModel() {
     private var job: Job? = null
 
     init {
-        startTimer()
+        // Calculate and set initial state immediately
+        val currentTime = System.currentTimeMillis()
+        val diff = targetTime - currentTime
+
+        if (diff <= 0) {
+            _remainingTime.value = "00:00:00"
+            _isFinished.value = true
+        } else {
+            _remainingTime.value = formatMillis(diff)
+            startTimer()
+        }
     }
 
     private fun startTimer() {
         job?.cancel()
         job = viewModelScope.launch {
             try {
-                // Check if target time is invalid or already passed
-                val currentTime = System.currentTimeMillis()
-
-                var diff = targetTime - currentTime
-
-                Log.e("diff",diff.toString())
-
-                if (diff<0) {
-                    Log.e("diff","less than zero")
-                    _remainingTime.value = "00:00:00"
-                    _isFinished.value = true
-                    return@launch
-                }
-
-                while (diff > 0) {
-                    Log.e("diff","greater than zero")
-                    _remainingTime.value = formatMillis(diff)
+                while (true) {
                     delay(1000)
 
-                    diff = targetTime - System.currentTimeMillis()
+                    val currentTime = System.currentTimeMillis()
+                    val diff = targetTime - currentTime
 
                     // When time's up, set to zero and finish
                     if (diff <= 0) {
-                        Log.e("diff","less than zero 22")
+                        Log.e("TaskTimer", "Timer finished")
                         _remainingTime.value = "00:00:00"
                         _isFinished.value = true
                         break
                     }
+
+                    // Update remaining time
+                    _remainingTime.value = formatMillis(diff)
                 }
             } catch (e: Exception) {
+                Log.e("TaskTimer", "Timer error: ${e.message}")
                 _remainingTime.value = "00:00:00"
                 _isFinished.value = true
             }
@@ -78,4 +76,5 @@ class TaskTimerViewModel(private val targetTime: Long) : ViewModel() {
         job?.cancel()
         super.onCleared()
     }
+
 }

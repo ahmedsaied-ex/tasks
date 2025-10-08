@@ -23,8 +23,15 @@ class TaskViewHolder(
         val timerViewModel = TaskTimerViewModel(task.time)
 
         lifecycleScope.launch {
-            timerViewModel.remainingTime.collectLatest { remaining ->
-                binding.tvTimer.text = remaining
+            val remainingTime = task.time -  System.currentTimeMillis()
+            if (remainingTime<=0){
+                Log.e("remainingTime",remainingTime.toString())
+                binding.tvTimer.text = "00:00:00"
+            }
+            else{
+                timerViewModel.remainingTime.collectLatest { remaining ->
+                    binding.tvTimer.text = remaining
+                }
             }
         }
 

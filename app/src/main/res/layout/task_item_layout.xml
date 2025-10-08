@@ -7,6 +7,9 @@
 <variable
     name="task"
     type="com.example.tasksapp.data.models.TaskData" />
+        <variable
+            name="time"
+            type="com.example.tasksapp.ui.viewmodel.TaskTimerViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -72,7 +75,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
-                    android:text="@{String.valueOf(task.time)}"
+                    android:text="00:00:00"
                     app:layout_constraintBottom_toBottomOf="@+id/imageView"
                     app:layout_constraintStart_toEndOf="@+id/imageView"
                     app:layout_constraintTop_toTopOf="@+id/imageView"

@@ -24,7 +24,7 @@ class TaskLocalStorage(context: Context) {
 
     fun getTasks(): List<TaskData> {
         return try {
-            val json = prefs.getString(Constants.TASKS, null) // ✅ FIXED
+            val json = prefs.getString(Constants.TASKS, null)
             if (json != null) {
                 val type = object : TypeToken<List<TaskData>>() {}.type
                 val tasks = gson.fromJson<List<TaskData>>(json, type)

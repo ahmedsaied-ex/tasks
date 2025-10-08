@@ -85,7 +85,7 @@ class HomeFragment : Fragment() {
             context = requireContext(),
             fragmentManager = parentFragmentManager,
             onTaskCreated = { task ->
-                viewModel.addTask(task)
+                viewModel.addTask(task=task, context = requireContext())
                 Log.d("HomeFragment_text", "Task added: ${task.time}")
             }
         ).showDialog()

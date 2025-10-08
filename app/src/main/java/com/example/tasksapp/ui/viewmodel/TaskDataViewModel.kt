@@ -1,11 +1,14 @@
 package com.example.tasksapp.ui.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 
 import com.example.tasksapp.data.models.TaskData
 import com.example.tasksapp.data.repository.TaskRepository
+
+import com.example.tasksapp.utils.ReminderScheduler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -34,18 +37,24 @@ class TaskDataViewModel(private val repo: TaskRepository) : ViewModel() {
         }
     }
 
-    fun addTask(task: TaskData) {
+    fun addTask(task: TaskData,context: Context) {
         viewModelScope.launch {
             try {
                 Log.e("taskssss",task.toString())
                 repo.addTask(task)
-                _tasks.value = _tasks.value + task // ✅ Just add locally
+                _tasks.value = _tasks.value + task
+                ReminderScheduler.scheduleTaskReminder(
+                    context = context,
+                    task = task
+                )
                 Log.e("taskssss",_tasks.value.toString())
             } catch (e: Exception) {
                 _error.value = "Failed to add task"
             }
         }
     }
+    }
 
 
-}
+
+
